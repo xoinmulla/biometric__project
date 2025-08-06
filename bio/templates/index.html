@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Metric Analysis</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Font for a futuristic, clinical feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles to apply the fonts and create glowing effects */
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            /* A subtle animated gradient background with dark red tones */
+            background: linear-gradient(-45deg, #120202, #2d0808, #1a0404, #000000);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Custom glow effect for cards and buttons, now in red */
+        .glow-shadow {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2), 0 0 5px rgba(239, 68, 68, 0.1);
+        }
+        .glow-shadow-hover:hover {
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4), 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Custom styling for the file input button */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-button {
+            border: 1px solid #ef4444; /* Red border */
+            color: #fecaca; /* Light red text */
+            background-color: transparent;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-button:hover {
+            background-color: #ef4444; /* Red background on hover */
+            color: #111827; /* Dark text on hover */
+        }
+
+        /* Hiding the default file input but keeping it functional */
+        input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-red-200 min-h-screen">
+
+    <div class="container mx-auto p-4 sm:p-8 max-w-7xl">
+
+        <!-- Header Section -->
+        <header class="flex items-center justify-center mb-8 text-center">
+            <!-- Blood Drop Icon SVG -->
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 mr-4 text-red-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C7.99 2 5.86 5.83 7.29 9.73C8.44 12.83 12 17.31 12 22C12 17.31 15.56 12.83 16.71 9.73C18.14 5.83 16.01 2 12 2Z" fill="currentColor"/>
+            </svg>
+            <h1 class="text-3xl sm:text-4xl font-bold text-red-300">Hematology Scan Upload</h1>
+        </header>
+
+        <!-- Upload Form Card -->
+        <div class="bg-gray-800/50 border border-red-500/20 rounded-xl p-6 sm:p-8 mb-12 backdrop-blur-sm glow-shadow">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                <!-- Django CSRF Token -->
+                {% csrf_token %}
+
+                <!-- Custom File Input -->
+                <div>
+                    <label class="block text-lg font-semibold text-red-300 mb-3" for="{{ form.image.id_for_label }}">Select Biological Sample Image:</label>
+                    <div class="flex items-center space-x-4">
+                        <div class="file-input-wrapper">
+                            <button type="button" class="file-input-button">Choose File</button>
+                            {{ form.image }}
+                        </div>
+                        <span id="file-name-display" class="text-gray-400 italic">No file selected</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 text-center">
+                    <button type="submit" class="w-full sm:w-auto bg-red-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-500/50 transition-all duration-300 glow-shadow-hover">
+                        Analyze Sample
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Divider -->
+        <hr class="border-t-2 border-red-700/20 my-12">
+
+        <!-- Gallery Section -->
+        <div>
+            <h2 class="text-3xl font-bold text-red-300 mb-8 text-center">Analysis Archive</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for photo in photos %}
+                <div class="group bg-gray-800/50 border border-red-800/30 rounded-lg overflow-hidden transition-all duration-300 hover:border-red-500/50 glow-shadow-hover">
+                    <div class="overflow-hidden">
+                         <img src="{{ photo.image.url }}" 
+                              class="w-full h-56 object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" 
+                              alt="Sample {{ photo.id }}"
+                              onerror="this.onerror=null;this.src='https://placehold.co/400x400/111827/ef4444?text=Invalid\nSample';">
+                    </div>
+                    <div class="p-4 bg-gray-900/30">
+                        <p class="text-sm text-red-400 truncate">Sample ID: {{ photo.id }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-12 bg-gray-800/30 rounded-lg">
+                    <p class="text-gray-400 text-lg">No samples have been archived.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to display the selected filename
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileNameDisplay = document.getElementById('file-name-display');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileNameDisplay.textContent = this.files[0].name;
+                    fileNameDisplay.classList.remove('italic', 'text-gray-400');
+                    fileNameDisplay.classList.add('font-semibold', 'text-red-300');
+                } else {
+                    fileNameDisplay.textContent = 'No file selected';
+                    fileNameDisplay.classList.add('italic', 'text-gray-400');
+                    fileNameDisplay.classList.remove('font-semibold', 'text-red-300');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
