@@ -1,163 +1,178 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Metric Analysis</title>
-    
-    <!-- Tailwind CSS for styling -->
+    <title>BioMetric | Secure Analysis Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Font for a futuristic, clinical feel -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Custom styles to apply the fonts and create glowing effects */
+        :root {
+            --primary-color: #22d3ee; /* Cyan-400 */
+            --bg-dark: #0f172a; /* Slate-900 */
+            --bg-card: #1e293b; /* Slate-800 */
+            --border-color: rgba(34, 211, 238, 0.2);
+            --text-primary: #e2e8f0; /* Slate-200 */
+            --text-secondary: #94a3b8; /* Slate-400 */
+        }
+
         body {
-            font-family: 'Rajdhani', sans-serif;
-            /* A subtle animated gradient background with dark red tones */
-            background: linear-gradient(-45deg, #120202, #2d0808, #1a0404, #000000);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
         }
 
-        h1, h2 {
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
-        }
-        
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .highlight-text {
+            color: var(--primary-color);
         }
 
-        /* Custom glow effect for cards and buttons, now in red */
-        .glow-shadow {
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2), 0 0 5px rgba(239, 68, 68, 0.1);
-        }
-        .glow-shadow-hover:hover {
-            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4), 0 0 10px rgba(239, 68, 68, 0.2);
-        }
-        
-        /* Custom styling for the file input button */
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-        
-        .file-input-button {
-            border: 1px solid #ef4444; /* Red border */
-            color: #fecaca; /* Light red text */
-            background-color: transparent;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem; /* 16px */
+            transition: all 0.3s ease-in-out;
         }
 
-        .file-input-button:hover {
-            background-color: #ef4444; /* Red background on hover */
-            color: #111827; /* Dark text on hover */
+        .card:hover {
+            border-color: rgba(34, 211, 238, 0.5);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
         }
 
-        /* Hiding the default file input but keeping it functional */
-        input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
+        /* Custom File Input */
+        .file-drop-zone.dragover {
+            border-color: var(--primary-color);
+            background-color: #334155; /* Slate-700 */
         }
     </style>
 </head>
-<body class="bg-gray-900 text-red-200 min-h-screen">
+<body class="min-h-screen flex flex-col">
 
-    <div class="container mx-auto p-4 sm:p-8 max-w-7xl">
+    <nav class="sticky top-0 z-50 py-4 bg-slate-900/80 backdrop-blur-lg border-b border-slate-300/10">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-3">
+                <svg class="w-8 h-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.588 8.188a7.5 7.5 0 01-16.324 0A7.5 7.5 0 017.864 4.243zM12 15.75a3.75 3.75 0 110-7.5 3.75 3.75 0 010 7.5z" />
+                </svg>
+                <span class="text-2xl font-bold tracking-wider highlight-text">BioMetric</span>
+            </a>
+            <div class="hidden sm:flex items-center space-x-6 font-semibold text-lg text-slate-300">
+                <a href="/" class="hover:text-cyan-400 transition-colors">Home</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="hover:text-cyan-400 transition-colors">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:text-cyan-400 transition-colors">Login</a>
+                    <a href="{% url 'register' %}" class="bg-cyan-500/80 text-white px-5 py-2 rounded-lg hover:bg-cyan-500 transition-colors">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
-        <!-- Header Section -->
-        <header class="flex items-center justify-center mb-8 text-center">
-            <!-- Blood Drop Icon SVG -->
-            <svg class="w-10 h-10 sm:w-12 sm:h-12 mr-4 text-red-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C7.99 2 5.86 5.83 7.29 9.73C8.44 12.83 12 17.31 12 22C12 17.31 15.56 12.83 16.71 9.73C18.14 5.83 16.01 2 12 2Z" fill="currentColor"/>
-            </svg>
-            <h1 class="text-3xl sm:text-4xl font-bold text-red-300">Hematology Scan Upload</h1>
-        </header>
+    <header class="text-center py-24">
+        <h1 class="text-5xl sm:text-6xl font-bold">Secure <span class="highlight-text">Bio-Metric</span> Analysis</h1>
+        <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">Upload your biological samples for fast, accurate, and secure analysis powered by our advanced AI platform.</p>
+    </header>
 
-        <!-- Upload Form Card -->
-        <div class="bg-gray-800/50 border border-red-500/20 rounded-xl p-6 sm:p-8 mb-12 backdrop-blur-sm glow-shadow">
-            <form method="post" enctype="multipart/form-data" class="space-y-6">
-                <!-- Django CSRF Token -->
+    <main class="flex-grow container mx-auto px-6 max-w-7xl space-y-20">
+
+        {% if user.is_authenticated %}
+        <section class="card p-8 md:p-10">
+            <h2 class="text-3xl font-bold text-center mb-8">Upload a New Sample</h2>
+            <form method="post" enctype="multipart/form-data" class="space-y-6 max-w-2xl mx-auto">
                 {% csrf_token %}
-
-                <!-- Custom File Input -->
+                
                 <div>
-                    <label class="block text-lg font-semibold text-red-300 mb-3" for="{{ form.image.id_for_label }}">Select Biological Sample Image:</label>
-                    <div class="flex items-center space-x-4">
-                        <div class="file-input-wrapper">
-                            <button type="button" class="file-input-button">Choose File</button>
-                            {{ form.image }}
+                    <label for="file-upload" class="block text-base font-semibold text-slate-300 mb-2">Sample Image</label>
+                    <div id="file-drop-zone" class="file-drop-zone relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer bg-slate-900/50 transition-colors">
+                        <div class="text-center">
+                            <svg class="mx-auto h-10 w-10 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" /></svg>
+                            <p class="mt-3 text-slate-400"><span class="font-semibold text-cyan-400">Click to upload</span> or drag and drop</p>
+                            <p id="file-name" class="mt-1 text-xs text-slate-500">PNG, JPG, or GIF (MAX. 5MB)</p>
                         </div>
-                        <span id="file-name-display" class="text-gray-400 italic">No file selected</span>
+                        {{ form.image|add_class:"absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"|attr:"id:file-upload" }}
                     </div>
                 </div>
 
-                <div class="pt-4 text-center">
-                    <button type="submit" class="w-full sm:w-auto bg-red-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-500/50 transition-all duration-300 glow-shadow-hover">
+                <div>
+                    <label for="id_bio" class="block text-base font-semibold text-slate-300 mb-2">Description</label>
+                    {{ form.bio|add_class:"w-full p-3 bg-slate-700/50 border border-slate-600 rounded-lg text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition"|attr:"rows:3"|attr:"placeholder:e.g., Patient ID, sample type, etc." }}
+                </div>
+
+                <div class="text-center pt-4">
+                    <button type="submit" class="bg-cyan-600 text-white font-bold text-lg py-3 px-10 rounded-lg hover:bg-cyan-500 transition-colors shadow-lg shadow-cyan-900/50">
                         Analyze Sample
                     </button>
                 </div>
             </form>
-        </div>
+        </section>
 
-        <!-- Divider -->
-        <hr class="border-t-2 border-red-700/20 my-12">
-
-        <!-- Gallery Section -->
-        <div>
-            <h2 class="text-3xl font-bold text-red-300 mb-8 text-center">Analysis Archive</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <section>
+            <h2 class="text-3xl font-bold text-center mb-8">Analysis Archive</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {% for photo in photos %}
-                <div class="group bg-gray-800/50 border border-red-800/30 rounded-lg overflow-hidden transition-all duration-300 hover:border-red-500/50 glow-shadow-hover">
-                    <div class="overflow-hidden">
-                         <img src="{{ photo.image.url }}" 
-                              class="w-full h-56 object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" 
-                              alt="Sample {{ photo.id }}"
-                              onerror="this.onerror=null;this.src='https://placehold.co/400x400/111827/ef4444?text=Invalid\nSample';">
+                <div class="card overflow-hidden group hover:-translate-y-1">
+                    <div class="overflow-hidden h-52">
+                        <img src="{{ photo.image.url }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" alt="Sample {{ photo.id }}">
                     </div>
-                    <div class="p-4 bg-gray-900/30">
-                        <p class="text-sm text-red-400 truncate">Sample ID: {{ photo.id }}</p>
+                    <div class="p-4">
+                        <p class="text-xs font-semibold text-cyan-400">SAMPLE #{{ photo.id }}</p>
+                        <p class="text-base text-slate-200 truncate mt-1">{{ photo.bio|default:"No description" }}</p>
+                        <p class="text-xs text-slate-500 mt-2">{{ photo.uploaded_at|date:"M d, Y, P" }}</p>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-span-full text-center py-12 bg-gray-800/30 rounded-lg">
-                    <p class="text-gray-400 text-lg">No samples have been archived.</p>
+                <div class="col-span-full card p-12 text-center border-dashed border-slate-600">
+                     <p class="text-slate-400 text-lg">Your analysis archive is empty.</p>
+                     <p class="text-slate-500">Upload a sample to begin.</p>
                 </div>
                 {% endfor %}
             </div>
-        </div>
-    </div>
+        </section>
+        {% else %}
+        <section class="card p-12 text-center max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold mb-3">Access Your Dashboard</h2>
+            <p class="text-slate-400 mb-6">Please login or create an account to manage your bio-metric analyses.</p>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="{% url 'login' %}" class="bg-cyan-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-cyan-500 transition-colors">Login</a>
+                <a href="{% url 'register' %}" class="bg-slate-600/50 text-slate-200 px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-600 transition-colors">Register</a>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer class="border-t border-slate-300/10 py-6 mt-20 text-center text-sm text-slate-500">
+        <p>&copy; {% now "Y" %} <span class="font-semibold text-slate-400">BioMetric</span> | All Rights Reserved</p>
+        <p class="mt-1">Powered by DharwadHubballiTutor</p>
+    </footer>
 
     <script>
-        // JavaScript to display the selected filename
-        const fileInput = document.querySelector('input[type="file"]');
-        const fileNameDisplay = document.getElementById('file-name-display');
+        const dropZone = document.getElementById('file-drop-zone');
+        const fileUpload = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name');
 
-        if (fileInput) {
-            fileInput.addEventListener('change', function() {
-                if (this.files && this.files.length > 0) {
-                    fileNameDisplay.textContent = this.files[0].name;
-                    fileNameDisplay.classList.remove('italic', 'text-gray-400');
-                    fileNameDisplay.classList.add('font-semibold', 'text-red-300');
-                } else {
-                    fileNameDisplay.textContent = 'No file selected';
-                    fileNameDisplay.classList.add('italic', 'text-gray-400');
-                    fileNameDisplay.classList.remove('font-semibold', 'text-red-300');
+        if (dropZone && fileUpload && fileNameDisplay) {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length) {
+                    fileUpload.files = files;
+                    fileNameDisplay.textContent = files[0].name;
+                }
+            });
+            fileUpload.addEventListener('change', () => {
+                if (fileUpload.files.length) {
+                    fileNameDisplay.textContent = fileUpload.files[0].name;
                 }
             });
         }
